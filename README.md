@@ -20,6 +20,8 @@ return
 }
 fmt.Printf("Address of library bcrypt.dll : 0x%X\n", uintptr(lib))
 ```
+<img src="assets/img_1.png">
+
 
 ## Obteniendo la Dirección de la Función
 
@@ -89,6 +91,8 @@ fmt.Printf("Thread handle: 0x%X\n", threadHandle)
 fmt.Println(colorYellow, "Inyect Success [+]", colorReset)
 fmt.Scanln()
 ```
+<img src="assets/img_3.png">
+
 # Funciones Auxiliares
 ## copyMemory
 
